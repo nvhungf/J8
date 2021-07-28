@@ -18,21 +18,28 @@ app.controller("shopping-cart-ctrl", function($scope, $http) {
             }
         },
         remove(id) {
-            
+            var index = this.items.findIndex(item => item.id == id);
+            this.items.splice(index, 1);
+            this.saveToLocalStorage();
         },
 
         clear() {
-           
+            this.items = []
+            this.saveToLocalStorage();
         },
 
         amt_of(item) {},
 
         get count() {
-            
+            return this.items
+                .map(item => item.qty)
+                .reduce((total, qty) => total += qty, 0);
         },
 
         get amount() {
-           
+            return this.items
+                .map(item => item.qty * item.price)
+                .reduce((total, qty) => total += qty, 0);
         },
 
         saveToLocalStorage() {
@@ -40,8 +47,9 @@ app.controller("shopping-cart-ctrl", function($scope, $http) {
             localStorage.setItem("cart", json);
         },
         loadFromLocalStorage() {
-           
-        }
+            var json = localStorage.getItem("cart");
+            this.items = json ? JSON.parse(json) : [];
+        },
 
     }
     $scope.cart.loadFromLocalStorage();
