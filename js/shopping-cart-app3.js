@@ -53,5 +53,30 @@ app.controller("shopping-cart-ctrl", function($scope, $http) {
 
     }
     $scope.cart.loadFromLocalStorage();
+     $scope.order = {
+        createDate: new Date(),
+        address: "",
+        account: { username: $("#username").text() },
+        orderDetails() {
+            return $scope.cart.items.map(item => {
+                return {
+                    product: { id: item.id },
+                    price: item.price,
+                    quantity: item.qty
+                }
+            });
+        },
+        purchase() {
+            var order = angular.copy(this);
 
+            $http.post("/rest/orders", order).then(resp => {
+                alert("Datv hang thanh cong ");
+                $scope.cart.clear();
+                location.href = "/order/detail/" + resp.data.id;
+            }).catch(error => {
+                alert("Dat Hang Loi")
+                console.log(error)
+            })
+        }
+    }
 });
